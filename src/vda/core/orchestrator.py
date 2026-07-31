@@ -38,9 +38,18 @@ class Orchestrator:
 
             prompt = self.prompt_builder.build(scene)
 
+            prompt_file = self.workspace.save_prompt(
+                project=project,
+                scene=scene,
+                prompt=prompt,
+            )
+
             print()
             print("Prompt:")
             print(prompt)
+
+            print()
+            print(f"Saved Prompt: {prompt_file}")
 
             task = provider.generate(
                 prompt=prompt,

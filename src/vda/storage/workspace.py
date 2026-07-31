@@ -25,6 +25,8 @@ class Workspace:
         for scene in project.scenes:
             self.create_scene(project, scene)
 
+        return project_dir
+
     def create_scene(
         self,
         project: Project,
@@ -43,3 +45,24 @@ class Workspace:
         )
 
         return scene_dir
+
+    def save_prompt(
+        self,
+        project: Project,
+        scene: Scene,
+        prompt: str,
+    ):
+
+        scene_dir = self.create_scene(
+            project,
+            scene,
+        )
+
+        prompt_file = scene_dir / "prompt.txt"
+
+        prompt_file.write_text(
+            prompt,
+            encoding="utf-8",
+        )
+
+        return prompt_file
