@@ -1,16 +1,20 @@
 from vda.core.registry import Registry
 from vda.providers.mock.provider import MockProvider
+from vda.services.dispatcher import Dispatcher
 
 
 registry = Registry()
 
 registry.register(MockProvider())
 
+dispatcher = Dispatcher(registry)
+
+provider = dispatcher.select_provider()
+
 print()
 
-print("Registered Providers")
+print("Selected Provider")
 
-print("--------------------")
+print("-----------------")
 
-for name, provider in registry.all().items():
-    print(name)
+print(provider.name)
