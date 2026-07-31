@@ -1,22 +1,27 @@
-from vda.models.project import Project
-from vda.models.scene import Scene
+from vda.core.event_bus import EventBus
 
 
-project = Project(
-    id="demo",
-    title="Black Hole",
-    description="Introduction",
-    duration=60,
-    aspect_ratio="16:9",
+bus = EventBus()
+
+
+def on_project_created(project):
+
+    print()
+
+    print("EVENT -> Project Created")
+
+    print(project)
+
+
+bus.subscribe(
+    "project.created",
+    on_project_created,
 )
 
-scene = Scene(
-    id=1,
-    title="Scene 1",
-    narration="A black hole in deep space.",
-    duration=6,
+bus.publish(
+    "project.created",
+    {
+        "title": "Black Hole",
+        "duration": 60,
+    },
 )
-
-project.scenes.append(scene)
-
-print(project)
