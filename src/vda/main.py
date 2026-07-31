@@ -1,11 +1,18 @@
+from vda.config.settings import load_settings
 from vda.core.orchestrator import Orchestrator
 from vda.core.registry import Registry
+from vda.factories import ProviderFactory
 from vda.llm.factory import create_llm
-from vda.providers.video.mock.provider import MockVideoProvider
 from vda.services.dispatcher import Dispatcher
 
+settings = load_settings()
+
+factory = ProviderFactory(settings)
+
 registry = Registry()
-registry.register(MockVideoProvider())
+registry.register(
+    factory.video_provider(),
+)
 
 dispatcher = Dispatcher(registry)
 
@@ -21,12 +28,10 @@ project = agent.run(
 )
 
 print()
-
 print("Project:")
 print(project.title)
 
 print()
-
 print("Scenes:")
 
 for scene in project.scenes:
