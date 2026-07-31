@@ -1,21 +1,22 @@
-from vda.managers.plugin_manager import PluginManager
+from vda.models.scene import Scene
+from vda.providers.mock.provider import MockProvider
 
 
-plugins = PluginManager()
+provider = MockProvider()
 
-plugins.register(
-    "mock",
-    {
-        "name": "Mock Provider",
-        "version": "0.1.0",
-    },
+provider.login()
+
+scene = Scene(
+    id=1,
+    title="Black Hole",
+    narration="A black hole in deep space.",
+    duration=5,
 )
 
-print()
+task = provider.generate(scene)
 
-print("Registered Plugins")
+print(task)
 
-print("------------------")
+provider.download(task)
 
-for name, plugin in plugins.all().items():
-    print(name, "->", plugin)
+provider.logout()
