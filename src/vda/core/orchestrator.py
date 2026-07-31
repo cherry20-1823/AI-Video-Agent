@@ -38,7 +38,11 @@ class Orchestrator:
             print("Prompt:")
             print(prompt)
 
-            task = provider.generate(scene)
+            task = provider.generate(
+    prompt=prompt,
+    duration=scene.duration,
+    aspect_ratio=project.aspect_ratio,
+)
 
             provider.download(task)
 
