@@ -51,11 +51,7 @@ class Orchestrator:
                 scene=scene,
             )
 
-            image_file = scene_dir / "image.txt"
-
-            print()
-            print("Prompt:")
-            print(prompt)
+            image_file = scene_dir / "image.png"
 
             print()
             print(f"Saved Prompt: {prompt_file}")
