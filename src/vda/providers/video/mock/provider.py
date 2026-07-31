@@ -1,8 +1,8 @@
 from vda.models.task_result import TaskResult
-from vda.providers.base import BaseProvider
+from vda.providers.video.base import BaseVideoProvider
 
 
-class MockProvider(BaseProvider):
+class MockVideoProvider(BaseVideoProvider):
 
     @property
     def name(self):

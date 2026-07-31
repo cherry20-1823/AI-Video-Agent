@@ -1,11 +1,11 @@
 from vda.core.orchestrator import Orchestrator
 from vda.core.registry import Registry
 from vda.llm.factory import create_llm
-from vda.providers.mock.provider import MockProvider
+from vda.providers.video.mock.provider import MockVideoProvider
 from vda.services.dispatcher import Dispatcher
 
 registry = Registry()
-registry.register(MockProvider())
+registry.register(MockVideoProvider())
 
 dispatcher = Dispatcher(registry)
 

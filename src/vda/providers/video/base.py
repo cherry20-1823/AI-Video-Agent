@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseProvider(ABC):
+class BaseVideoProvider(ABC):
 
     @property
     @abstractmethod
