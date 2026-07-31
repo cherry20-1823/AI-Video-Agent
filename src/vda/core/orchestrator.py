@@ -2,6 +2,7 @@ from vda.builders.prompt_builder import PromptBuilder
 from vda.llm.base import BaseLLM
 from vda.services.dispatcher import Dispatcher
 from vda.services.planner import Planner
+from vda.storage.workspace import Workspace
 
 
 class Orchestrator:
@@ -14,6 +15,7 @@ class Orchestrator:
         self.dispatcher = dispatcher
         self.planner = Planner(llm)
         self.prompt_builder = PromptBuilder()
+        self.workspace = Workspace()
 
     def run(self, topic: str):
 
@@ -22,6 +24,8 @@ class Orchestrator:
         print("=================================")
 
         project = self.planner.create_project(topic)
+
+        self.workspace.create_project(project)
 
         provider = self.dispatcher.select_provider()
 
@@ -39,10 +43,10 @@ class Orchestrator:
             print(prompt)
 
             task = provider.generate(
-    prompt=prompt,
-    duration=scene.duration,
-    aspect_ratio=project.aspect_ratio,
-)
+                prompt=prompt,
+                duration=scene.duration,
+                aspect_ratio=project.aspect_ratio,
+            )
 
             provider.download(task)
 
