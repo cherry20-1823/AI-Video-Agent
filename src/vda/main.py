@@ -1,6 +1,6 @@
 from vda.core.orchestrator import Orchestrator
 from vda.core.registry import Registry
-from vda.llm.mock.provider import MockLLM
+from vda.llm.factory import create_llm
 from vda.providers.mock.provider import MockProvider
 from vda.services.dispatcher import Dispatcher
 
@@ -10,7 +10,7 @@ registry.register(MockProvider())
 
 dispatcher = Dispatcher(registry)
 
-llm = MockLLM()
+llm = create_llm("mock")
 
 agent = Orchestrator(
     dispatcher=dispatcher,

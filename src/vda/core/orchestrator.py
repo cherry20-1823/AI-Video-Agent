@@ -1,3 +1,4 @@
+from vda.builders.prompt_builder import PromptBuilder
 from vda.llm.base import BaseLLM
 from vda.services.dispatcher import Dispatcher
 from vda.services.planner import Planner
@@ -12,6 +13,7 @@ class Orchestrator:
     ):
         self.dispatcher = dispatcher
         self.planner = Planner(llm)
+        self.prompt_builder = PromptBuilder()
 
     def run(self, topic: str):
 
@@ -29,6 +31,12 @@ class Orchestrator:
 
             print()
             print(f"Scene {scene.id}: {scene.title}")
+
+            prompt = self.prompt_builder.build(scene)
+
+            print()
+            print("Prompt:")
+            print(prompt)
 
             task = provider.generate(scene)
 
