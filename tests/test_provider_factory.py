@@ -3,6 +3,7 @@ import pytest
 from vda.config.settings import Settings
 from vda.factories import ProviderFactory
 from vda.providers.image.mock.provider import MockImageProvider
+from vda.providers.image.openai.provider import OpenAIImageProvider
 from vda.providers.video.mock.provider import MockVideoProvider
 
 
@@ -30,9 +31,21 @@ def test_factory_creates_mock_image_provider():
     assert isinstance(provider, MockImageProvider)
 
 
-def test_factory_normalizes_provider_name():
+def test_factory_creates_openai_image_provider():
     settings = Settings(
-        image_provider=" Mock ",
+        image_provider="openai",
+    )
+
+    factory = ProviderFactory(settings)
+
+    provider = factory.image_provider()
+
+    assert isinstance(provider, OpenAIImageProvider)
+
+
+def test_factory_normalizes_provider_names():
+    settings = Settings(
+        image_provider=" OpenAI ",
         video_provider=" MOCK ",
     )
 
@@ -40,8 +53,9 @@ def test_factory_normalizes_provider_name():
 
     assert isinstance(
         factory.image_provider(),
-        MockImageProvider,
+        OpenAIImageProvider,
     )
+
     assert isinstance(
         factory.video_provider(),
         MockVideoProvider,
