@@ -1,22 +1,16 @@
-from vda.models.scene import Scene
+from vda.core.registry import Registry
 from vda.providers.mock.provider import MockProvider
 
 
-provider = MockProvider()
+registry = Registry()
 
-provider.login()
+registry.register(MockProvider())
 
-scene = Scene(
-    id=1,
-    title="Black Hole",
-    narration="A black hole in deep space.",
-    duration=5,
-)
+print()
 
-task = provider.generate(scene)
+print("Registered Providers")
 
-print(task)
+print("--------------------")
 
-provider.download(task)
-
-provider.logout()
+for name, provider in registry.all().items():
+    print(name)
