@@ -1,27 +1,21 @@
-from vda.core.event_bus import EventBus
+from vda.managers.plugin_manager import PluginManager
 
 
-bus = EventBus()
+plugins = PluginManager()
 
-
-def on_project_created(project):
-
-    print()
-
-    print("EVENT -> Project Created")
-
-    print(project)
-
-
-bus.subscribe(
-    "project.created",
-    on_project_created,
-)
-
-bus.publish(
-    "project.created",
+plugins.register(
+    "mock",
     {
-        "title": "Black Hole",
-        "duration": 60,
+        "name": "Mock Provider",
+        "version": "0.1.0",
     },
 )
+
+print()
+
+print("Registered Plugins")
+
+print("------------------")
+
+for name, plugin in plugins.all().items():
+    print(name, "->", plugin)
