@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from typing import List
 
-from .scene import Scene
 from .enums import ProjectStatus
+from .scene import Scene
 
 
 @dataclass(slots=True)

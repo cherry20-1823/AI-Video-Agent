@@ -4,7 +4,6 @@ from vda.llm.factory import create_llm
 from vda.providers.mock.provider import MockProvider
 from vda.services.dispatcher import Dispatcher
 
-
 registry = Registry()
 registry.register(MockProvider())
 
