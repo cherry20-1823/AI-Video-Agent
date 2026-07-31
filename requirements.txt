@@ -1,0 +1,12 @@
+openai
+playwright
+pydantic
+pyyaml
+httpx
+rich
+loguru
+ffmpeg-python
+pytest
+black
+ruff
+mypy
