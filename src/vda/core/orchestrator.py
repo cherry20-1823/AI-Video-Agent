@@ -1,64 +1,87 @@
 from vda.builders.prompt_builder import PromptBuilder
 from vda.llm.base import BaseLLM
-from vda.providers.image.mock.provider import MockImageProvider
+from vda.providers.image.base import BaseImageProvider
 from vda.services.dispatcher import Dispatcher
 from vda.services.planner import Planner
 from vda.storage.workspace import Workspace
 
 
 class Orchestrator:
-
     def __init__(
         self,
         dispatcher: Dispatcher,
         llm: BaseLLM,
+        image_provider: BaseImageProvider,
     ):
         self.dispatcher = dispatcher
         self.planner = Planner(llm)
         self.prompt_builder = PromptBuilder()
         self.workspace = Workspace()
-        self.image_provider = MockImageProvider()
+        self.image_provider = image_provider
 
-    def run(self, topic: str):
-
+    def run(
+        self,
+        topic: str,
+    ):
         print("=================================")
         print(" Video Director Agent")
         print("=================================")
 
-        project = self.planner.create_project(topic)
+        project = self.planner.create_project(
+            topic
+        )
 
-        self.workspace.create_project(project)
+        self.workspace.create_project(
+            project
+        )
 
-        provider = self.dispatcher.select_provider()
+        video_provider = (
+            self.dispatcher.select_provider()
+        )
 
-        provider.login()
+        video_provider.login()
 
         for scene in project.scenes:
-
             print()
-            print(f"Scene {scene.id}: {scene.title}")
-
-            prompt = self.prompt_builder.build(scene)
-
-            prompt_file = self.workspace.save_prompt(
-                project=project,
-                scene=scene,
-                prompt=prompt,
+            print(
+                f"Scene {scene.id}: {scene.title}"
             )
 
-            scene_dir = self.workspace.create_scene(
-                project=project,
-                scene=scene,
+            prompt = self.prompt_builder.build(
+                scene
             )
 
-            image_file = scene_dir / "image.png"
+            prompt_file = (
+                self.workspace.save_prompt(
+                    project=project,
+                    scene=scene,
+                    prompt=prompt,
+                )
+            )
+
+            scene_dir = (
+                self.workspace.create_scene(
+                    project=project,
+                    scene=scene,
+                )
+            )
+
+            image_file = (
+                scene_dir / "image.png"
+            )
 
             print()
-            print(f"Saved Prompt: {prompt_file}")
+            print(
+                f"Saved Prompt: {prompt_file}"
+            )
 
-            image_task = self.image_provider.generate(
-                prompt=prompt,
-                output_path=str(image_file),
+            image_task = (
+                self.image_provider.generate(
+                    prompt=prompt,
+                    output_path=str(
+                        image_file
+                    ),
+                )
             )
 
             print()
@@ -66,15 +89,21 @@ class Orchestrator:
             print("----------")
             print(image_task)
 
-            task = provider.generate(
-                prompt=prompt,
-                duration=scene.duration,
-                aspect_ratio=project.aspect_ratio,
+            video_task = (
+                video_provider.generate(
+                    prompt=prompt,
+                    duration=scene.duration,
+                    aspect_ratio=(
+                        project.aspect_ratio
+                    ),
+                )
             )
 
-            provider.download(task)
+            video_provider.download(
+                video_task
+            )
 
-        provider.logout()
+        video_provider.logout()
 
         print()
         print("Project Finished")

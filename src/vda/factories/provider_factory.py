@@ -1,4 +1,5 @@
 from vda.config.settings import Settings
+from vda.openai.client import create_openai_client
 from vda.providers.image.base import BaseImageProvider
 from vda.providers.image.mock.provider import MockImageProvider
 from vda.providers.image.openai.provider import OpenAIImageProvider
@@ -42,7 +43,14 @@ class ProviderFactory:
             return MockImageProvider()
 
         if provider_name == "openai":
-            return OpenAIImageProvider()
+            client = create_openai_client(
+                self.settings.openai_api_key
+            )
+
+            return OpenAIImageProvider(
+                client=client,
+                model=self.settings.openai_image_model,
+            )
 
         raise ValueError(
             f"Unknown image provider: {provider_name}"

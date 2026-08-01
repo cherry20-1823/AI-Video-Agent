@@ -21,6 +21,7 @@ llm = create_llm("mock")
 agent = Orchestrator(
     dispatcher=dispatcher,
     llm=llm,
+    image_provider=factory.image_provider(),
 )
 
 project = agent.run(
