@@ -1,4 +1,7 @@
-class MockProjectPlanner:
+from vda.planners.base import BaseProjectPlanner
+
+
+class MockProjectPlanner(BaseProjectPlanner):
 
     def plan(
         self,
