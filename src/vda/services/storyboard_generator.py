@@ -1,7 +1,7 @@
 from vda.builders.scene_prompt_builder import (
     ScenePromptBuilder,
 )
-from vda.models.project_plan import ProjectPlan
+from vda.models.project_plan import ProjectPlan, ScenePlan
 from vda.models.task_result import TaskResult
 from vda.providers.image.base import BaseImageProvider
 from vda.storage.workspace import Workspace
@@ -18,18 +18,12 @@ class StoryboardGenerator:
         self.image_provider = image_provider
         self.workspace = workspace or Workspace()
 
-    def generate_first_scene(
+    def _generate_scene(
         self,
         project: ProjectPlan,
-        project_id: str = "project-001",
+        scene: ScenePlan,
+        project_id: str,
     ) -> TaskResult:
-        if not project.scenes:
-            raise ValueError(
-                "Project plan contains no scenes."
-            )
-
-        scene = project.scenes[0]
-
         prompt = self.prompt_builder.build(
             project=project,
             scene=scene,
@@ -53,4 +47,39 @@ class StoryboardGenerator:
         return self.image_provider.generate(
             prompt=prompt,
             output_path=str(image_file),
+        )
+
+    def generate_all(
+        self,
+        project: ProjectPlan,
+        project_id: str = "project-001",
+    ) -> list[TaskResult]:
+        if not project.scenes:
+            raise ValueError(
+                "Project plan contains no scenes."
+            )
+
+        return [
+            self._generate_scene(
+                project=project,
+                scene=scene,
+                project_id=project_id,
+            )
+            for scene in project.scenes
+        ]
+
+    def generate_first_scene(
+        self,
+        project: ProjectPlan,
+        project_id: str = "project-001",
+    ) -> TaskResult:
+        if not project.scenes:
+            raise ValueError(
+                "Project plan contains no scenes."
+            )
+
+        return self._generate_scene(
+            project=project,
+            scene=project.scenes[0],
+            project_id=project_id,
         )
