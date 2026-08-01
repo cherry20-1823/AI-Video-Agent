@@ -9,6 +9,59 @@ class Workspace:
     def __init__(self, root: str = "workspace"):
         self.root = Path(root)
 
+    def project_dir(
+        self,
+        project_id: str,
+    ) -> Path:
+        path = self.root / project_id
+        path.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        return path
+
+    def scene_dir(
+        self,
+        project_id: str,
+        scene_id: int,
+    ) -> Path:
+        path = (
+            self.project_dir(project_id)
+            / f"scene-{scene_id:03d}"
+        )
+        path.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+        return path
+
+    def prompt_path(
+        self,
+        project_id: str,
+        scene_id: int,
+    ) -> Path:
+        return (
+            self.scene_dir(
+                project_id,
+                scene_id,
+            )
+            / "prompt.txt"
+        )
+
+    def image_path(
+        self,
+        project_id: str,
+        scene_id: int,
+    ) -> Path:
+        return (
+            self.scene_dir(
+                project_id,
+                scene_id,
+            )
+            / "image.png"
+        )
+
+
     def create_project(self, project: Project):
 
         project_dir = self.root / project.id

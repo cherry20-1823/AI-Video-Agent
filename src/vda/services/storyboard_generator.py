@@ -1,11 +1,10 @@
-from pathlib import Path
-
 from vda.builders.scene_prompt_builder import (
     ScenePromptBuilder,
 )
 from vda.models.project_plan import ProjectPlan
 from vda.models.task_result import TaskResult
 from vda.providers.image.base import BaseImageProvider
+from vda.storage.workspace import Workspace
 
 
 class StoryboardGenerator:
@@ -13,11 +12,11 @@ class StoryboardGenerator:
         self,
         prompt_builder: ScenePromptBuilder,
         image_provider: BaseImageProvider,
-        workspace_root: str = "workspace",
+        workspace: Workspace | None = None,
     ):
         self.prompt_builder = prompt_builder
         self.image_provider = image_provider
-        self.workspace_root = Path(workspace_root)
+        self.workspace = workspace or Workspace()
 
     def generate_first_scene(
         self,
@@ -36,19 +35,15 @@ class StoryboardGenerator:
             scene=scene,
         )
 
-        scene_dir = (
-            self.workspace_root
-            / project_id
-            / f"scene-{scene.id:03d}"
+        prompt_file = self.workspace.prompt_path(
+            project_id=project_id,
+            scene_id=scene.id,
         )
 
-        scene_dir.mkdir(
-            parents=True,
-            exist_ok=True,
+        image_file = self.workspace.image_path(
+            project_id=project_id,
+            scene_id=scene.id,
         )
-
-        prompt_file = scene_dir / "prompt.txt"
-        image_file = scene_dir / "image.png"
 
         prompt_file.write_text(
             prompt,

@@ -14,6 +14,7 @@ from vda.models.task_result import TaskResult
 from vda.services.storyboard_generator import (
     StoryboardGenerator,
 )
+from vda.storage.workspace import Workspace
 
 
 def create_project() -> ProjectPlan:
@@ -55,7 +56,9 @@ def test_storyboard_generator_creates_first_scene(
     generator = StoryboardGenerator(
         prompt_builder=ScenePromptBuilder(),
         image_provider=image_provider,
-        workspace_root=str(tmp_path),
+        workspace=Workspace(
+            root=str(tmp_path)
+        ),
     )
 
     result = generator.generate_first_scene(
@@ -95,7 +98,9 @@ def test_storyboard_generator_rejects_empty_project(
     generator = StoryboardGenerator(
         prompt_builder=ScenePromptBuilder(),
         image_provider=Mock(),
-        workspace_root=str(tmp_path),
+        workspace=Workspace(
+            root=str(tmp_path)
+        ),
     )
 
     with pytest.raises(
