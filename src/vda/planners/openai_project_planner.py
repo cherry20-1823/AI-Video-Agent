@@ -1,7 +1,11 @@
+from vda.openai import OpenAIResponses
 from vda.planners.base import BaseProjectPlanner
 
 
 class OpenAIProjectPlanner(BaseProjectPlanner):
+
+    def __init__(self):
+        self.responses = OpenAIResponses()
 
     def plan(
         self,
