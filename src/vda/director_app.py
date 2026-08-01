@@ -1,4 +1,6 @@
 from vda.agents import DirectorAgent
+from vda.config.settings import load_settings
+from vda.factories import PlannerFactory
 
 
 def main():
@@ -10,7 +12,14 @@ def main():
         print("视频需求不能为空。")
         return
 
-    plan = DirectorAgent().create_plan(
+    settings = load_settings()
+    planner = PlannerFactory(
+        settings
+    ).planner()
+
+    plan = DirectorAgent(
+        planner=planner,
+    ).create_plan(
         request
     )
 
