@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 @dataclass(slots=True)
 class Settings:
+    project_planner: str = "mock"
     image_provider: str = "mock"
     video_provider: str = "mock"
 
@@ -17,6 +18,10 @@ def load_settings() -> Settings:
     load_dotenv()
 
     return Settings(
+        project_planner=os.getenv(
+            "PROJECT_PLANNER",
+            "mock",
+        ),
         image_provider=os.getenv(
             "IMAGE_PROVIDER",
             "mock",
