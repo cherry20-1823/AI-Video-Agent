@@ -1,3 +1,6 @@
+from vda.executors.ffmpeg_executor import (
+    FFmpegExecutor,
+)
 from vda.models.asset_registry import (
     AssetRegistry,
 )
@@ -14,8 +17,10 @@ class FFmpegRenderer(BaseRenderer):
     def __init__(
         self,
         registry: AssetRegistry,
+        executor: FFmpegExecutor | None = None,
     ):
         self.registry = registry
+        self.executor = executor
 
     def build_concat_filter(
         self,
@@ -88,9 +93,20 @@ class FFmpegRenderer(BaseRenderer):
         timeline: Timeline,
         output_path: str,
     ) -> str:
-        self.build_command(
+
+        command = self.build_command(
             timeline,
             output_path,
         )
+
+        if self.executor is not None:
+            code = self.executor.run(
+                command
+            )
+
+            if code != 0:
+                raise RuntimeError(
+                    "ffmpeg execution failed"
+                )
 
         return output_path
