@@ -1,6 +1,9 @@
 from vda.builders.prompt_builder import PromptBuilder
 from vda.llm.base import BaseLLM
 from vda.models.asset_registry import AssetRegistry
+from vda.models.context import (
+    PipelineContext,
+)
 from vda.providers.image.base import BaseImageProvider
 from vda.renderers.ffmpeg import (
     FFmpegRenderer,
@@ -62,16 +65,26 @@ class Orchestrator:
             self.dispatcher.select_provider()
         )
 
-        self.video_generator = VideoGenerator(
-            video_provider=video_provider,
+        context = PipelineContext(
+            project=project,
             workspace=self.workspace,
-            registry=self.asset_registry,
+            asset_registry=self.asset_registry,
         )
 
         self.video_generator = VideoGenerator(
             video_provider=video_provider,
+            context=context,
+        )
+
+        context = PipelineContext(
+            project=project,
             workspace=self.workspace,
-            registry=self.asset_registry,
+            asset_registry=self.asset_registry,
+        )
+
+        self.video_generator = VideoGenerator(
+            video_provider=video_provider,
+            context=context,
         )
         for scene in project.scenes:
             print()

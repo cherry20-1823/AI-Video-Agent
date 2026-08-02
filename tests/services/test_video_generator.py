@@ -1,6 +1,12 @@
 
 from vda.models.asset_registry import AssetRegistry
+from vda.models.context import (
+    PipelineContext,
+)
 from vda.models.enums import AssetType
+from vda.models.project import (
+    Project,
+)
 from vda.providers.video.mock.provider import (
     MockVideoProvider,
 )
@@ -19,10 +25,21 @@ def test_video_generator_creates_video_asset(
 
     registry = AssetRegistry()
 
+    context = PipelineContext(
+        project=Project(
+            id="project-001",
+            title="test",
+            description="",
+            duration=60,
+            aspect_ratio="16:9",
+        ),
+        workspace=workspace,
+        asset_registry=registry,
+    )
+
     generator = VideoGenerator(
         video_provider=MockVideoProvider(),
-        workspace=workspace,
-        registry=registry,
+        context=context,
     )
 
     result = generator.generate(

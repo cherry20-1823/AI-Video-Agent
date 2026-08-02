@@ -1,21 +1,20 @@
 
 from vda.models.asset import Asset
-from vda.models.asset_registry import AssetRegistry
+from vda.models.context import (
+    PipelineContext,
+)
 from vda.models.enums import AssetType
 from vda.providers.video.base import BaseVideoProvider
-from vda.storage.workspace import Workspace
 
 
 class VideoGenerator:
     def __init__(
         self,
         video_provider: BaseVideoProvider,
-        workspace: Workspace,
-        registry: AssetRegistry | None = None,
+        context: PipelineContext,
     ):
         self.video_provider = video_provider
-        self.workspace = workspace
-        self.registry = registry or AssetRegistry()
+        self.context = context
 
     def generate(
         self,
@@ -23,7 +22,7 @@ class VideoGenerator:
         scene_id: int,
         prompt: str,
     ):
-        video_path = self.workspace.video_path(
+        video_path = self.context.workspace.video_path(
             project_id,
             scene_id,
         )
@@ -39,7 +38,7 @@ class VideoGenerator:
             )
         )
 
-        self.registry.add(
+        self.context.asset_registry.add(
             Asset(
                 id=f"video:scene-{scene_id:03d}",
                 name=f"Scene {scene_id} Video",
