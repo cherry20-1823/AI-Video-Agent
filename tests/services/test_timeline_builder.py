@@ -4,15 +4,36 @@ from vda.models.asset import Asset
 from vda.models.asset_registry import (
     AssetRegistry,
 )
+from vda.models.context import (
+    PipelineContext,
+)
 from vda.models.enums import AssetType
+from vda.models.project import (
+    Project,
+)
 from vda.services.timeline_builder import (
     TimelineBuilder,
+)
+from vda.storage.workspace import (
+    Workspace,
 )
 
 
 def test_timeline_builder_builds_video_timeline():
 
     registry = AssetRegistry()
+
+    context = PipelineContext(
+        project=Project(
+            id="project-001",
+            title="test",
+            description="",
+            duration=60,
+            aspect_ratio="16:9",
+        ),
+        workspace=Workspace(),
+        asset_registry=registry,
+    )
 
     registry.add(
         Asset(
@@ -39,7 +60,7 @@ def test_timeline_builder_builds_video_timeline():
     )
 
     timeline = TimelineBuilder().build(
-        registry
+        context
     )
 
     segments = (
@@ -62,8 +83,20 @@ def test_timeline_builder_handles_empty_registry():
 
     registry = AssetRegistry()
 
+    context = PipelineContext(
+        project=Project(
+            id="project-001",
+            title="test",
+            description="",
+            duration=60,
+            aspect_ratio="16:9",
+        ),
+        workspace=Workspace(),
+        asset_registry=registry,
+    )
+
     timeline = TimelineBuilder().build(
-        registry
+        context
     )
 
     assert len(
@@ -79,6 +112,18 @@ def test_timeline_builder_handles_empty_registry():
 def test_timeline_builder_creates_continuous_timeline():
 
     registry = AssetRegistry()
+
+    context = PipelineContext(
+        project=Project(
+            id="project-001",
+            title="test",
+            description="",
+            duration=60,
+            aspect_ratio="16:9",
+        ),
+        workspace=Workspace(),
+        asset_registry=registry,
+    )
 
     registry.add(
         Asset(
@@ -105,7 +150,7 @@ def test_timeline_builder_creates_continuous_timeline():
     )
 
     timeline = TimelineBuilder().build(
-        registry
+        context
     )
 
     segments = (

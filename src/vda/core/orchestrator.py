@@ -152,7 +152,7 @@ class Orchestrator:
             )
 
         context.timeline = self.timeline_builder.build(
-            context.asset_registry
+            context
         )
 
         render_result = self.render_workflow.run(

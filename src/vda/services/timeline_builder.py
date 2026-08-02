@@ -1,5 +1,5 @@
-from vda.models.asset_registry import (
-    AssetRegistry,
+from vda.models.context import (
+    PipelineContext,
 )
 from vda.models.enums import AssetType
 from vda.models.timeline import (
@@ -14,13 +14,13 @@ class TimelineBuilder:
 
     def build(
         self,
-        registry: AssetRegistry,
+        context: PipelineContext,
     ) -> Timeline:
         video_segments = []
 
         current_time = 0.0
 
-        for asset in registry.by_type(
+        for asset in context.asset_registry.by_type(
             AssetType.VIDEO
         ):
             video_segments.append(
