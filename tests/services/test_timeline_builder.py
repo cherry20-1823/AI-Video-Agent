@@ -74,3 +74,47 @@ def test_timeline_builder_handles_empty_registry():
         timeline.tracks[0].segments
         == []
     )
+
+
+def test_timeline_builder_creates_continuous_timeline():
+
+    registry = AssetRegistry()
+
+    registry.add(
+        Asset(
+            id="video:scene-001",
+            name="Scene 1",
+            type=AssetType.VIDEO,
+            path=Path(
+                "scene-001/video.mp4"
+            ),
+            duration=3,
+        )
+    )
+
+    registry.add(
+        Asset(
+            id="video:scene-002",
+            name="Scene 2",
+            type=AssetType.VIDEO,
+            path=Path(
+                "scene-002/video.mp4"
+            ),
+            duration=4,
+        )
+    )
+
+    timeline = TimelineBuilder().build(
+        registry
+    )
+
+    segments = (
+        timeline.tracks[0]
+        .segments
+    )
+
+    assert segments[0].start == 0
+    assert segments[0].duration == 3
+
+    assert segments[1].start == 3
+    assert segments[1].duration == 4
