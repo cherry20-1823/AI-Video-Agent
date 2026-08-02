@@ -122,3 +122,26 @@ def test_asset_registry_all_returns_copy():
     assets.clear()
 
     assert registry.assets == [asset]
+
+
+def test_asset_registry_registers_video_asset():
+    registry = AssetRegistry()
+
+    video_asset = Asset(
+        id="video:scene-001",
+        name="Scene 1 Video",
+        type=AssetType.VIDEO,
+        path=Path("scene-001/video.mp4"),
+    )
+
+    registry.add(video_asset)
+
+    assert registry.get(
+        "video:scene-001"
+    ) is video_asset
+
+    assert registry.by_type(
+        AssetType.VIDEO
+    ) == [
+        video_asset
+    ]
