@@ -151,13 +151,13 @@ class Orchestrator:
                 prompt=prompt,
             )
 
-        timeline = self.timeline_builder.build(
-            self.asset_registry
+        context.timeline = self.timeline_builder.build(
+            context.asset_registry
         )
 
         render_result = self.render_workflow.run(
             task_id=project.id,
-            timeline=timeline,
+            timeline=context.timeline,
             output_path="final.mp4",
         )
         print()
