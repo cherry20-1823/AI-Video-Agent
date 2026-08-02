@@ -63,6 +63,19 @@ class Workspace:
             / "image.png"
         )
 
+    def video_path(
+        self,
+        project_id: str,
+        scene_id: int,
+    ) -> Path:
+        return (
+            self.scene_dir(
+                project_id,
+                scene_id,
+            )
+            / "video.mp4"
+        )
+
 
     def create_project(self, project: Project):
 

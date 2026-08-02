@@ -104,3 +104,23 @@ def test_workspace_cleanup_rejects_negative_scene_count(
         raise AssertionError(
             "Expected ValueError for negative scene count."
         )
+
+
+def test_video_path(
+    tmp_path,
+):
+    workspace = Workspace(
+        root=str(tmp_path)
+    )
+
+    path = workspace.video_path(
+        "project-001",
+        1,
+    )
+
+    assert path.name == "video.mp4"
+
+    assert (
+        path.parent.name
+        == "scene-001"
+    )
