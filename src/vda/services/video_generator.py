@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from vda.models.asset import Asset
 from vda.models.asset_registry import AssetRegistry
@@ -34,14 +33,18 @@ class VideoGenerator:
             output_path=str(video_path),
         )
 
+        downloaded_path = (
+            self.video_provider.download(
+                result
+            )
+        )
+
         self.registry.add(
             Asset(
                 id=f"video:scene-{scene_id:03d}",
                 name=f"Scene {scene_id} Video",
                 type=AssetType.VIDEO,
-                path=Path(
-                    f"scene-{scene_id:03d}/video.mp4"
-                ),
+                path=downloaded_path,
             )
         )
 

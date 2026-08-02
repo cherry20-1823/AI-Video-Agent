@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from vda.models.asset_registry import AssetRegistry
 from vda.models.enums import AssetType
@@ -51,6 +50,9 @@ def test_video_generator_creates_video_asset(
         "video:scene-001"
     )
 
-    assert videos[0].path == Path(
-        "scene-001/video.mp4"
+    assert videos[0].path == (
+        workspace.video_path(
+            "project-001",
+            1,
+        )
     )
