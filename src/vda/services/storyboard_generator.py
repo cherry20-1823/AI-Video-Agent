@@ -6,9 +6,14 @@ from vda.builders.scene_prompt_builder import (
 from vda.models.asset import Asset
 from vda.models.asset_registry import AssetRegistry
 from vda.models.enums import AssetType
-from vda.models.project_plan import ProjectPlan, ScenePlan
+from vda.models.project_plan import (
+    MediaType,
+    ProjectPlan,
+    ScenePlan,
+)
 from vda.models.task_result import TaskResult
 from vda.providers.image.base import BaseImageProvider
+from vda.providers.video.base import BaseVideoProvider
 from vda.services.resume_planner import ResumePlanner
 from vda.storage.workspace import Workspace
 
@@ -18,17 +23,69 @@ class StoryboardGenerator:
         self,
         prompt_builder: ScenePromptBuilder,
         image_provider: BaseImageProvider,
+        video_provider: BaseVideoProvider | None = None,
         workspace: Workspace | None = None,
         registry: AssetRegistry | None = None,
         resume_planner: ResumePlanner | None = None,
     ):
         self.prompt_builder = prompt_builder
         self.image_provider = image_provider
+        self.video_provider = video_provider
         self.workspace = workspace or Workspace()
         self.registry = registry or AssetRegistry()
         self.resume_planner = (
             resume_planner
             or ResumePlanner(self.workspace)
+        )
+
+    def _get_provider(
+        self,
+        scene: ScenePlan,
+    ):
+        if (
+            scene.media_type == MediaType.VIDEO
+            and self.video_provider is not None
+        ):
+            return self.video_provider
+
+        return self.image_provider
+
+    def _get_output_path(
+        self,
+        project_id: str,
+        scene: ScenePlan,
+    ):
+        if scene.media_type == MediaType.VIDEO:
+            return self.workspace.video_path(
+                project_id=project_id,
+                scene_id=scene.id,
+            )
+
+        return self.workspace.image_path(
+            project_id=project_id,
+            scene_id=scene.id,
+        )
+
+    def _get_asset_type(
+        self,
+        scene: ScenePlan,
+    ) -> AssetType:
+        if scene.media_type == MediaType.VIDEO:
+            return AssetType.VIDEO
+
+        return AssetType.IMAGE
+
+    def _get_asset_path(
+        self,
+        scene: ScenePlan,
+    ) -> Path:
+        if scene.media_type == MediaType.VIDEO:
+            return Path(
+                f"scene-{scene.id:03d}/video.mp4"
+            )
+
+        return Path(
+            f"scene-{scene.id:03d}/image.png"
         )
 
     def _generate_scene(
@@ -47,9 +104,9 @@ class StoryboardGenerator:
             scene_id=scene.id,
         )
 
-        image_file = self.workspace.image_path(
+        output_file = self._get_output_path(
             project_id=project_id,
-            scene_id=scene.id,
+            scene=scene,
         )
 
         prompt_file.write_text(
@@ -68,18 +125,29 @@ class StoryboardGenerator:
             )
         )
 
-        result = self.image_provider.generate(
+        provider = self._get_provider(
+            scene
+        )
+
+        result = provider.generate(
             prompt=prompt,
-            output_path=str(image_file),
+            output_path=str(output_file),
+        )
+
+        asset_type = self._get_asset_type(
+            scene
         )
 
         self.registry.add(
             Asset(
-                id=f"image:scene-{scene.id:03d}",
-                name=f"Scene {scene.id} Image",
-                type=AssetType.IMAGE,
-                path=Path(
-                    f"scene-{scene.id:03d}/image.png"
+                id=(
+                    f"{asset_type.value.lower()}"
+                    f":scene-{scene.id:03d}"
+                ),
+                name=f"Scene {scene.id} Asset",
+                type=asset_type,
+                path=self._get_asset_path(
+                    scene
                 ),
             )
         )
