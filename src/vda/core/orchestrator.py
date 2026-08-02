@@ -1,9 +1,23 @@
 from vda.builders.prompt_builder import PromptBuilder
 from vda.llm.base import BaseLLM
+from vda.models.asset_registry import AssetRegistry
 from vda.providers.image.base import BaseImageProvider
+from vda.renderers.ffmpeg import (
+    FFmpegRenderer,
+)
+from vda.services.composer import (
+    Composer,
+)
 from vda.services.dispatcher import Dispatcher
 from vda.services.planner import Planner
+from vda.services.timeline_builder import TimelineBuilder
+from vda.services.video_generator import (
+    VideoGenerator,
+)
 from vda.storage.workspace import Workspace
+from vda.workflow.render_workflow import (
+    RenderWorkflow,
+)
 
 
 class Orchestrator:
@@ -18,6 +32,15 @@ class Orchestrator:
         self.prompt_builder = PromptBuilder()
         self.workspace = Workspace()
         self.image_provider = image_provider
+        self.asset_registry = AssetRegistry()
+        self.timeline_builder = TimelineBuilder()
+        self.render_workflow = RenderWorkflow(
+            Composer(
+                renderer=FFmpegRenderer(
+                    self.asset_registry
+                )
+            )
+        )
 
     def run(
         self,
@@ -89,23 +112,31 @@ class Orchestrator:
             print("----------")
             print(image_task)
 
-            video_task = (
-                video_provider.generate(
-                    prompt=prompt,
-                    duration=scene.duration,
-                    aspect_ratio=(
-                        project.aspect_ratio
-                    ),
-                )
+            video_generator = VideoGenerator(
+                video_provider=video_provider,
+                workspace=self.workspace,
+                registry=self.asset_registry,
             )
 
-            video_provider.download(
-                video_task
+            video_generator.generate(
+                project_id=project.id,
+                scene_id=scene.id,
+                prompt=prompt,
             )
+
+        timeline = self.timeline_builder.build(
+            self.asset_registry
+        )
+
+        render_result = self.render_workflow.run(
+            task_id=project.id,
+            timeline=timeline,
+            output_path="final.mp4",
+        )
 
         video_provider.logout()
 
         print()
         print("Project Finished")
 
-        return project
+        return render_result
