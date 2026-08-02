@@ -78,27 +78,6 @@ class Orchestrator:
             video_provider=video_provider,
             context=context,
         )
-
-        context = PipelineContext(
-            topic=topic,
-            project=project,
-            workspace=self.workspace,
-            asset_registry=self.asset_registry,
-        )
-
-        self.render_workflow = RenderWorkflow(
-            context,
-            Composer(
-                renderer=FFmpegRenderer(
-                    self.asset_registry
-                )
-            ),
-        )
-
-        self.video_generator = VideoGenerator(
-            video_provider=video_provider,
-            context=context,
-        )
         for scene in project.scenes:
             print()
             print(
