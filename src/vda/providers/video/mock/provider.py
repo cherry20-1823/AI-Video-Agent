@@ -1,54 +1,31 @@
+from pathlib import Path
+
 from vda.models.task_result import TaskResult
 from vda.providers.video.base import BaseVideoProvider
 
 
 class MockVideoProvider(BaseVideoProvider):
-
-    @property
-    def name(self):
-        return "mock"
-
-    def login(self):
-        print("Login Mock")
-
     def generate(
         self,
         prompt: str,
-        duration: int,
-        aspect_ratio: str,
-    ):
+        output_path: str,
+    ) -> TaskResult:
+        output = Path(output_path)
 
-        print("Generating Video")
-        print("----------------")
-        print(prompt)
-
-        print()
-        print(f"Duration : {duration}s")
-        print(f"Aspect   : {aspect_ratio}")
-
-        return TaskResult(
-            task_id="mock-task-001",
-            provider="mock",
-            status="completed",
-            progress=100,
+        output.parent.mkdir(
+            parents=True,
+            exist_ok=True,
         )
 
-    def query(self, task):
-        return task
+        output.write_text(
+            "mock video",
+            encoding="utf-8",
+        )
 
-    def download(self, task: TaskResult):
-
-        print()
-
-        print("Task")
-
-        print("----")
-
-        print(task)
-
-        print()
-
-        print("Download Fake Video")
-
-    def logout(self):
-        print("Logout Mock")
+        return TaskResult(
+            task_id="video-001",
+            provider="mock-video",
+            status="completed",
+            progress=100,
+            local_file=str(output),
+        )

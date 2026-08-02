@@ -1,34 +1,13 @@
 from abc import ABC, abstractmethod
 
+from vda.models.task_result import TaskResult
+
 
 class BaseVideoProvider(ABC):
-
-    @property
-    @abstractmethod
-    def name(self):
-        pass
-
-    @abstractmethod
-    def login(self):
-        pass
-
     @abstractmethod
     def generate(
         self,
         prompt: str,
-        duration: int,
-        aspect_ratio: str,
-    ):
-        pass
-
-    @abstractmethod
-    def query(self, task):
-        pass
-
-    @abstractmethod
-    def download(self, task):
-        pass
-
-    @abstractmethod
-    def logout(self):
-        pass
+        output_path: str,
+    ) -> TaskResult:
+        """Generate a video."""
