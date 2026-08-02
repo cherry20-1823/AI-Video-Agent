@@ -61,6 +61,18 @@ class Orchestrator:
         video_provider = (
             self.dispatcher.select_provider()
         )
+
+        self.video_generator = VideoGenerator(
+            video_provider=video_provider,
+            workspace=self.workspace,
+            registry=self.asset_registry,
+        )
+
+        self.video_generator = VideoGenerator(
+            video_provider=video_provider,
+            workspace=self.workspace,
+            registry=self.asset_registry,
+        )
         for scene in project.scenes:
             print()
             print(
@@ -109,13 +121,7 @@ class Orchestrator:
             print("----------")
             print(image_task)
 
-            video_generator = VideoGenerator(
-                video_provider=video_provider,
-                workspace=self.workspace,
-                registry=self.asset_registry,
-            )
-
-            video_generator.generate(
+            self.video_generator.generate(
                 project_id=project.id,
                 scene_id=scene.id,
                 prompt=prompt,
