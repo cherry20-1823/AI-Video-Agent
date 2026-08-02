@@ -288,3 +288,58 @@ def test_storyboard_generator_skips_completed_scene(
 
     assert results == []
     image_provider.generate.assert_not_called()
+
+
+def test_storyboard_generator_generates_video_scene(
+    tmp_path,
+):
+    project = ProjectPlan(
+        title="AI Future",
+        topic="AI Video",
+        duration=10,
+        style="cinematic",
+        audience="General",
+    )
+
+    project.scenes.append(
+        ScenePlan(
+            id=1,
+            title="AI Motion",
+            goal="Generate AI video",
+            duration=5,
+            media_type=MediaType.VIDEO,
+        )
+    )
+
+    image_provider = Mock()
+
+    video_provider = Mock()
+    video_provider.generate.return_value = TaskResult(
+        task_id="video-001",
+        provider="mock-video",
+        status="completed",
+        progress=100,
+        local_file=str(
+            tmp_path / "video.mp4"
+        ),
+    )
+
+    generator = StoryboardGenerator(
+        prompt_builder=ScenePromptBuilder(),
+        image_provider=image_provider,
+        video_provider=video_provider,
+        workspace=Workspace(
+            root=str(tmp_path)
+        ),
+    )
+
+    result = generator.generate_first_scene(
+        project=project,
+        project_id="video-project",
+    )
+
+    assert result.status == "completed"
+
+    video_provider.generate.assert_called_once()
+
+    image_provider.generate.assert_not_called()
