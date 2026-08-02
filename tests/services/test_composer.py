@@ -32,7 +32,8 @@ def test_composer_returns_duration():
     )
 
     result = Composer().compose(
-        timeline
+        timeline,
+        output_path="movie.mp4",
     )
 
     assert result.status == (
@@ -40,3 +41,7 @@ def test_composer_returns_duration():
     )
 
     assert result.duration == 12
+
+    assert result.output_path == (
+        "movie.mp4"
+    )

@@ -11,6 +11,7 @@ class Composer:
     def compose(
         self,
         timeline: Timeline,
+        output_path: str | None = None,
     ) -> CompositionResult:
         duration = 0.0
 
@@ -24,4 +25,5 @@ class Composer:
         return CompositionResult(
             status="completed",
             duration=duration,
+            output_path=output_path,
         )
