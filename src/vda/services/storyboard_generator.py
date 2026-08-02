@@ -1,6 +1,11 @@
+from pathlib import Path
+
 from vda.builders.scene_prompt_builder import (
     ScenePromptBuilder,
 )
+from vda.models.asset import Asset
+from vda.models.asset_registry import AssetRegistry
+from vda.models.enums import AssetType
 from vda.models.project_plan import ProjectPlan, ScenePlan
 from vda.models.task_result import TaskResult
 from vda.providers.image.base import BaseImageProvider
@@ -13,10 +18,12 @@ class StoryboardGenerator:
         prompt_builder: ScenePromptBuilder,
         image_provider: BaseImageProvider,
         workspace: Workspace | None = None,
+        registry: AssetRegistry | None = None,
     ):
         self.prompt_builder = prompt_builder
         self.image_provider = image_provider
         self.workspace = workspace or Workspace()
+        self.registry = registry or AssetRegistry()
 
     def _generate_scene(
         self,
@@ -44,10 +51,34 @@ class StoryboardGenerator:
             encoding="utf-8",
         )
 
-        return self.image_provider.generate(
+        self.registry.add(
+            Asset(
+                id=f"prompt:scene-{scene.id:03d}",
+                name=f"Scene {scene.id} Prompt",
+                type=AssetType.PROMPT,
+                path=Path(
+                    f"scene-{scene.id:03d}/prompt.txt"
+                ),
+            )
+        )
+
+        result = self.image_provider.generate(
             prompt=prompt,
             output_path=str(image_file),
         )
+
+        self.registry.add(
+            Asset(
+                id=f"image:scene-{scene.id:03d}",
+                name=f"Scene {scene.id} Image",
+                type=AssetType.IMAGE,
+                path=Path(
+                    f"scene-{scene.id:03d}/image.png"
+                ),
+            )
+        )
+
+        return result
 
     def generate_all(
         self,

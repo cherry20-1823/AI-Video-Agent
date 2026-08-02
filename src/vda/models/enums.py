@@ -33,3 +33,4 @@ class AssetType(str, Enum):
     AUDIO = "AUDIO"
     IMAGE = "IMAGE"
     SUBTITLE = "SUBTITLE"
+    PROMPT = "PROMPT"

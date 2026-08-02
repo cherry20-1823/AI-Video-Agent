@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
@@ -6,6 +7,7 @@ import pytest
 from vda.builders.scene_prompt_builder import (
     ScenePromptBuilder,
 )
+from vda.models.enums import AssetType
 from vda.models.project_plan import (
     MediaType,
     ProjectPlan,
@@ -199,3 +201,46 @@ def test_storyboard_generator_writes_manifest(
 
     assert image_provider.generate.call_count == 2
 
+
+
+def test_storyboard_generator_registers_prompt_assets(
+    tmp_path,
+):
+    project = create_project()
+
+    image_provider = Mock()
+    image_provider.generate.return_value = TaskResult(
+        task_id="image-001",
+        provider="mock",
+        status="completed",
+        progress=100,
+        local_file=str(
+            tmp_path
+            / "project-001"
+            / "scene-001"
+            / "image.png"
+        ),
+    )
+
+    generator = StoryboardGenerator(
+        prompt_builder=ScenePromptBuilder(),
+        image_provider=image_provider,
+        workspace=Workspace(
+            root=str(tmp_path)
+        ),
+    )
+
+    generator.generate_all(
+        project=project,
+        project_id="project-001",
+    )
+
+    prompt_assets = generator.registry.by_type(
+        AssetType.PROMPT
+    )
+
+    assert len(prompt_assets) == 1
+    assert prompt_assets[0].id == "prompt:scene-001"
+    assert prompt_assets[0].path == Path(
+        "scene-001/prompt.txt"
+    )
