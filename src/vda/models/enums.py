@@ -34,3 +34,8 @@ class AssetType(str, Enum):
     IMAGE = "IMAGE"
     SUBTITLE = "SUBTITLE"
     PROMPT = "PROMPT"
+
+
+class GenerationMode(str, Enum):
+    IMAGE = "IMAGE"
+    VIDEO = "VIDEO"
