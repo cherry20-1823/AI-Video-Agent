@@ -17,6 +17,25 @@ class FFmpegRenderer(BaseRenderer):
     ):
         self.registry = registry
 
+    def build_concat_filter(
+        self,
+        count: int,
+    ) -> str:
+
+        inputs = "".join(
+            [
+                f"[{index}:v]"
+                for index in range(count)
+            ]
+        )
+
+        return (
+            f"{inputs}"
+            f"concat=n={count}:v=1:a=0"
+            "[out]"
+        )
+
+
     def build_command(
         self,
         timeline: Timeline,
