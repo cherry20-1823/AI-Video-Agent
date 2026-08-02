@@ -16,6 +16,17 @@ class BaseVideoProvider(ABC):
     ) -> TaskResult:
         """Generate a video."""
 
+
+    def login(
+        self,
+    ) -> None:
+        """Login provider."""
+
+    def logout(
+        self,
+    ) -> None:
+        """Logout provider."""
+
     @abstractmethod
     def download(
         self,
