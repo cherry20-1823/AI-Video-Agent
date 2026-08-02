@@ -59,7 +59,7 @@ class StoryboardGenerator:
                 "Project plan contains no scenes."
             )
 
-        return [
+        results = [
             self._generate_scene(
                 project=project,
                 scene=scene,
@@ -67,6 +67,37 @@ class StoryboardGenerator:
             )
             for scene in project.scenes
         ]
+
+        manifest = {
+            "project_id": project_id,
+            "project_title": project.title,
+            "total_scenes": len(project.scenes),
+            "scenes": [
+                {
+                    "id": scene.id,
+                    "title": scene.title,
+                    "prompt": (
+                        f"scene-{scene.id:03d}/prompt.txt"
+                    ),
+                    "image": (
+                        f"scene-{scene.id:03d}/image.png"
+                    ),
+                    "status": "completed",
+                }
+                for scene in project.scenes
+            ],
+        }
+
+        project_dir = self.workspace.project_dir(
+            project_id
+        )
+
+        self.workspace.save_manifest(
+            project_dir=project_dir,
+            manifest=manifest,
+        )
+
+        return results
 
     def generate_first_scene(
         self,

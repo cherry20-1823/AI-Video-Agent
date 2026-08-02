@@ -1,3 +1,4 @@
+import json
 from unittest.mock import Mock
 
 import pytest
@@ -110,3 +111,91 @@ def test_storyboard_generator_rejects_empty_project(
         generator.generate_first_scene(
             project=project,
         )
+
+def test_storyboard_generator_writes_manifest(
+    tmp_path,
+):
+    project = create_project()
+
+    second_scene = ScenePlan(
+        id=2,
+        title="产业革新",
+        goal="展示人工智能改变产业",
+        duration=8,
+        media_type=MediaType.IMAGE,
+    )
+    project.scenes.append(second_scene)
+
+    image_provider = Mock()
+    image_provider.generate.side_effect = [
+        TaskResult(
+            task_id="image-001",
+            provider="mock",
+            status="completed",
+            progress=100,
+            local_file=str(
+                tmp_path
+                / "test-project"
+                / "scene-001"
+                / "image.png"
+            ),
+        ),
+        TaskResult(
+            task_id="image-002",
+            provider="mock",
+            status="completed",
+            progress=100,
+            local_file=str(
+                tmp_path
+                / "test-project"
+                / "scene-002"
+                / "image.png"
+            ),
+        ),
+    ]
+
+    generator = StoryboardGenerator(
+        prompt_builder=ScenePromptBuilder(),
+        image_provider=image_provider,
+        workspace=Workspace(
+            root=str(tmp_path)
+        ),
+    )
+
+    results = generator.generate_all(
+        project=project,
+        project_id="test-project",
+    )
+
+    manifest_path = (
+        tmp_path
+        / "test-project"
+        / "storyboard.json"
+    )
+
+    assert manifest_path.exists()
+    assert len(results) == 2
+
+    manifest = json.loads(
+        manifest_path.read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert manifest["project_id"] == "test-project"
+    assert manifest["project_title"] == "AI Future"
+    assert manifest["total_scenes"] == 2
+
+    assert manifest["scenes"][0] == {
+        "id": 1,
+        "title": "智能时代序章",
+        "prompt": "scene-001/prompt.txt",
+        "image": "scene-001/image.png",
+        "status": "completed",
+    }
+
+    assert manifest["scenes"][1]["id"] == 2
+    assert manifest["scenes"][1]["status"] == "completed"
+
+    assert image_provider.generate.call_count == 2
+

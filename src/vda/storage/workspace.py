@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from vda.models.project import Project
@@ -98,6 +99,30 @@ class Workspace:
         )
 
         return scene_dir
+
+
+    def save_manifest(
+        self,
+        project_dir: Path,
+        manifest: dict,
+    ):
+
+        manifest_file = (
+            project_dir
+            / "storyboard.json"
+        )
+
+        manifest_file.write_text(
+            json.dumps(
+                manifest,
+                indent=2,
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        return manifest_file
+
 
     def save_prompt(
         self,
