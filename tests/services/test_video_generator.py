@@ -26,6 +26,7 @@ def test_video_generator_creates_video_asset(
     registry = AssetRegistry()
 
     context = PipelineContext(
+        topic="test",
         project=Project(
             id="project-001",
             title="test",

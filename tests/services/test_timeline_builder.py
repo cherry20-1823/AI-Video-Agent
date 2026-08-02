@@ -24,6 +24,7 @@ def test_timeline_builder_builds_video_timeline():
     registry = AssetRegistry()
 
     context = PipelineContext(
+        topic="test",
         project=Project(
             id="project-001",
             title="test",
@@ -84,6 +85,7 @@ def test_timeline_builder_handles_empty_registry():
     registry = AssetRegistry()
 
     context = PipelineContext(
+        topic="test",
         project=Project(
             id="project-001",
             title="test",
@@ -114,6 +116,7 @@ def test_timeline_builder_creates_continuous_timeline():
     registry = AssetRegistry()
 
     context = PipelineContext(
+        topic="test",
         project=Project(
             id="project-001",
             title="test",

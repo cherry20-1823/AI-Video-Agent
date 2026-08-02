@@ -10,11 +10,13 @@ from vda.storage.workspace import Workspace
 @dataclass(slots=True)
 class PipelineContext:
 
-    project: Project
+    topic: str
 
     workspace: Workspace
 
     asset_registry: AssetRegistry
+
+    project: Project | None = None
 
     timeline: Timeline | None = None
 

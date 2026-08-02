@@ -59,6 +59,7 @@ class Orchestrator:
         )
 
         context = PipelineContext(
+            topic=topic,
             project=project,
             workspace=self.workspace,
             asset_registry=self.asset_registry,
@@ -79,6 +80,7 @@ class Orchestrator:
         )
 
         context = PipelineContext(
+            topic=topic,
             project=project,
             workspace=self.workspace,
             asset_registry=self.asset_registry,

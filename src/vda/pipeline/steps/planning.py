@@ -19,7 +19,7 @@ class PlanningStep:
     ) -> PipelineContext:
 
         project = self.planner.create_project(
-            context.project.title
+            context.topic
         )
 
         context.project = project

@@ -24,6 +24,7 @@ from vda.workflow.render_workflow import (
 def test_render_workflow_returns_task_result():
 
     context = PipelineContext(
+        topic="test",
         project=Project(
             id="project-001",
             title="test",
