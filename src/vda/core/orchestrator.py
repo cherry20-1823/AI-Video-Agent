@@ -61,9 +61,6 @@ class Orchestrator:
         video_provider = (
             self.dispatcher.select_provider()
         )
-
-        video_provider.login()
-
         for scene in project.scenes:
             print()
             print(
@@ -133,9 +130,6 @@ class Orchestrator:
             timeline=timeline,
             output_path="final.mp4",
         )
-
-        video_provider.logout()
-
         print()
         print("Project Finished")
 
