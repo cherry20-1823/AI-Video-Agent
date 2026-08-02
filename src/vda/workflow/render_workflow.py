@@ -1,3 +1,6 @@
+from vda.models.context import (
+    PipelineContext,
+)
 from vda.models.task_result import (
     TaskResult,
 )
@@ -13,8 +16,10 @@ class RenderWorkflow:
 
     def __init__(
         self,
+        context: PipelineContext,
         composer: Composer,
     ):
+        self.context = context
         self.composer = composer
 
     def run(

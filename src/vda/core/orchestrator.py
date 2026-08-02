@@ -37,13 +37,6 @@ class Orchestrator:
         self.image_provider = image_provider
         self.asset_registry = AssetRegistry()
         self.timeline_builder = TimelineBuilder()
-        self.render_workflow = RenderWorkflow(
-            Composer(
-                renderer=FFmpegRenderer(
-                    self.asset_registry
-                )
-            )
-        )
 
     def run(
         self,
@@ -71,6 +64,15 @@ class Orchestrator:
             asset_registry=self.asset_registry,
         )
 
+        self.render_workflow = RenderWorkflow(
+            context,
+            Composer(
+                renderer=FFmpegRenderer(
+                    self.asset_registry
+                )
+            ),
+        )
+
         self.video_generator = VideoGenerator(
             video_provider=video_provider,
             context=context,
@@ -80,6 +82,15 @@ class Orchestrator:
             project=project,
             workspace=self.workspace,
             asset_registry=self.asset_registry,
+        )
+
+        self.render_workflow = RenderWorkflow(
+            context,
+            Composer(
+                renderer=FFmpegRenderer(
+                    self.asset_registry
+                )
+            ),
         )
 
         self.video_generator = VideoGenerator(
