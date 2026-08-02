@@ -4,6 +4,9 @@ from vda.models.timeline import (
     Track,
     TrackType,
 )
+from vda.renderers.mock import (
+    MockRenderer,
+)
 from vda.services.composer import (
     Composer,
 )
@@ -41,6 +44,24 @@ def test_composer_returns_duration():
     )
 
     assert result.duration == 12
+
+    assert result.output_path == (
+        "movie.mp4"
+    )
+
+
+def test_composer_uses_renderer():
+
+    timeline = Timeline(
+        tracks=[]
+    )
+
+    result = Composer(
+        renderer=MockRenderer(),
+    ).compose(
+        timeline,
+        output_path="movie.mp4",
+    )
 
     assert result.output_path == (
         "movie.mp4"
