@@ -5,7 +5,7 @@ from vda.executors.ffmpeg_executor import (
 )
 
 
-def test_ffmpeg_executor_returns_code():
+def test_ffmpeg_executor_returns_success():
 
     with patch(
         "subprocess.run"
@@ -13,13 +13,15 @@ def test_ffmpeg_executor_returns_code():
 
         run.return_value.returncode = 0
 
-        code = FFmpegExecutor().run(
+        result = FFmpegExecutor().run(
             [
                 "ffmpeg",
                 "-version",
             ]
         )
 
-    assert code == 0
+    assert result.success is True
+
+    assert result.return_code == 0
 
     run.assert_called_once()
