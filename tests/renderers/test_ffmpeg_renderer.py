@@ -1,3 +1,6 @@
+from vda.models.asset_registry import (
+    AssetRegistry,
+)
 from vda.models.timeline import Timeline
 from vda.renderers.ffmpeg import (
     FFmpegRenderer,
@@ -10,7 +13,9 @@ def test_ffmpeg_renderer_builds_command():
         tracks=[]
     )
 
-    renderer = FFmpegRenderer()
+    renderer = FFmpegRenderer(
+        AssetRegistry()
+    )
 
     command = renderer.build_command(
         timeline,
@@ -26,7 +31,9 @@ def test_ffmpeg_renderer_builds_command():
 
 def test_ffmpeg_renderer_returns_output():
 
-    result = FFmpegRenderer().render(
+    result = FFmpegRenderer(
+        AssetRegistry()
+    ).render(
         Timeline(
             tracks=[]
         ),

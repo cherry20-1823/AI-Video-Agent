@@ -1,19 +1,52 @@
-from vda.models.timeline import Timeline
-from vda.renderers.base import BaseRenderer
+from vda.models.asset_registry import (
+    AssetRegistry,
+)
+from vda.models.timeline import (
+    Timeline,
+)
+from vda.renderers.base import (
+    BaseRenderer,
+)
 
 
 class FFmpegRenderer(BaseRenderer):
+
+    def __init__(
+        self,
+        registry: AssetRegistry,
+    ):
+        self.registry = registry
 
     def build_command(
         self,
         timeline: Timeline,
         output_path: str,
     ) -> list[str]:
-        return [
+
+        command = [
             "ffmpeg",
             "-y",
-            output_path,
         ]
+
+        for track in timeline.tracks:
+            for segment in track.segments:
+                asset = self.registry.get(
+                    segment.asset_id
+                )
+
+                if asset is not None:
+                    command.extend(
+                        [
+                            "-i",
+                            str(asset.path),
+                        ]
+                    )
+
+        command.append(
+            output_path
+        )
+
+        return command
 
     def render(
         self,
