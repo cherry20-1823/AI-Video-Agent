@@ -244,3 +244,47 @@ def test_storyboard_generator_registers_prompt_assets(
     assert prompt_assets[0].path == Path(
         "scene-001/prompt.txt"
     )
+
+
+def test_storyboard_generator_skips_completed_scene(
+    tmp_path,
+):
+    project = create_project()
+
+    workspace = Workspace(
+        root=str(tmp_path)
+    )
+
+    prompt_file = workspace.prompt_path(
+        project_id="project-001",
+        scene_id=1,
+    )
+    image_file = workspace.image_path(
+        project_id="project-001",
+        scene_id=1,
+    )
+
+    prompt_file.write_text(
+        "existing prompt",
+        encoding="utf-8",
+    )
+    image_file.write_text(
+        "existing image",
+        encoding="utf-8",
+    )
+
+    image_provider = Mock()
+
+    generator = StoryboardGenerator(
+        prompt_builder=ScenePromptBuilder(),
+        image_provider=image_provider,
+        workspace=workspace,
+    )
+
+    results = generator.generate_all(
+        project=project,
+        project_id="project-001",
+    )
+
+    assert results == []
+    image_provider.generate.assert_not_called()

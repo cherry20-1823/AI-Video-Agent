@@ -9,6 +9,7 @@ from vda.models.enums import AssetType
 from vda.models.project_plan import ProjectPlan, ScenePlan
 from vda.models.task_result import TaskResult
 from vda.providers.image.base import BaseImageProvider
+from vda.services.resume_planner import ResumePlanner
 from vda.storage.workspace import Workspace
 
 
@@ -19,11 +20,16 @@ class StoryboardGenerator:
         image_provider: BaseImageProvider,
         workspace: Workspace | None = None,
         registry: AssetRegistry | None = None,
+        resume_planner: ResumePlanner | None = None,
     ):
         self.prompt_builder = prompt_builder
         self.image_provider = image_provider
         self.workspace = workspace or Workspace()
         self.registry = registry or AssetRegistry()
+        self.resume_planner = (
+            resume_planner
+            or ResumePlanner(self.workspace)
+        )
 
     def _generate_scene(
         self,
@@ -95,14 +101,22 @@ class StoryboardGenerator:
             expected_scene_count=len(project.scenes),
         )
 
-        results = [
-            self._generate_scene(
-                project=project,
-                scene=scene,
+        results = []
+
+        for scene in project.scenes:
+            if self.resume_planner.is_scene_complete(
                 project_id=project_id,
+                scene_id=scene.id,
+            ):
+                continue
+
+            results.append(
+                self._generate_scene(
+                    project=project,
+                    scene=scene,
+                    project_id=project_id,
+                )
             )
-            for scene in project.scenes
-        ]
 
         manifest = {
             "project_id": project_id,
