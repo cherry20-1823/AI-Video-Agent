@@ -4,6 +4,9 @@ from vda.executors.ffmpeg_executor import (
 from vda.models.asset_registry import (
     AssetRegistry,
 )
+from vda.models.render_result import (
+    RenderResult,
+)
 from vda.models.timeline import (
     Timeline,
 )
@@ -92,7 +95,7 @@ class FFmpegRenderer(BaseRenderer):
         self,
         timeline: Timeline,
         output_path: str,
-    ) -> str:
+    ) -> RenderResult:
 
         command = self.build_command(
             timeline,
@@ -100,13 +103,19 @@ class FFmpegRenderer(BaseRenderer):
         )
 
         if self.executor is not None:
-            code = self.executor.run(
+            result = self.executor.run(
                 command
             )
 
-            if code != 0:
-                raise RuntimeError(
-                    "ffmpeg execution failed"
-                )
+            if not result.success:
+                return result
 
-        return output_path
+            result.output_path = output_path
+
+            return result
+
+        return RenderResult(
+            success=True,
+            return_code=0,
+            output_path=output_path,
+        )

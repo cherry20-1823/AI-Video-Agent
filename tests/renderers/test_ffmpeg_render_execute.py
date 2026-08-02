@@ -9,6 +9,9 @@ from vda.models.asset_registry import (
 from vda.models.enums import (
     AssetType,
 )
+from vda.models.render_result import (
+    RenderResult,
+)
 from vda.models.timeline import (
     Timeline,
 )
@@ -27,7 +30,10 @@ class MockExecutor:
         command,
     ):
         self.command = command
-        return 0
+        return RenderResult(
+            success=True,
+            return_code=0,
+        )
 
 
 def test_ffmpeg_renderer_executes_command():
@@ -59,6 +65,10 @@ def test_ffmpeg_renderer_executes_command():
         "movie.mp4",
     )
 
-    assert result == "movie.mp4"
+    assert result.success is True
+
+    assert result.output_path == (
+        "movie.mp4"
+    )
 
     assert executor.command is not None

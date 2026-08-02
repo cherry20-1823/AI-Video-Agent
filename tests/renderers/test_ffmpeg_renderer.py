@@ -40,4 +40,8 @@ def test_ffmpeg_renderer_returns_output():
         "movie.mp4",
     )
 
-    assert result == "movie.mp4"
+    assert result.success is True
+
+    assert result.output_path == (
+        "movie.mp4"
+    )
