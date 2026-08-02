@@ -1,40 +1,34 @@
-# VDA Roadmap
+# AI-Video-Agent Roadmap
 
-## Milestone 1
+## Milestone 3 — Video Generation
 
-Core Framework
-✅ Completed
+### Sprint 12
+- [ ] BaseVideoProvider
+- [ ] MockVideoProvider
 
-## Milestone 2
+### Sprint 13
+- [ ] Video Asset
+- [ ] Video Registry
 
-AI Providers
-✅ Completed
+### Sprint 14
+- [ ] Timeline
 
-## Milestone 3
+### Sprint 15
+- [ ] Composer
 
-Director Agent
-🚧 In Progress
+---
 
-## Milestone 4
+## Future Milestones
 
-Workflow Engine
+### Milestone 4
+- Audio Provider
+- Voice Generation
 
-## Milestone 5
+### Milestone 5
+- Subtitle Pipeline
 
-Media Composer
+### Milestone 6
+- Movie Composer
 
-## Milestone 6
-
-Web UI
-
-## Long-Term Vision
-
-Support multiple providers:
-
-- OpenAI
-- Runway
-- Kling
-- Pika
-- CapCut
-- Veo
-
+### Milestone 7
+- One-click Prompt → Movie
