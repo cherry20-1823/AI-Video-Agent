@@ -4,6 +4,12 @@ from vda.models.asset_registry import AssetRegistry
 from vda.models.context import (
     PipelineContext,
 )
+from vda.pipeline.runner import (
+    PipelineRunner,
+)
+from vda.pipeline.steps.planning import (
+    PlanningStep,
+)
 from vda.providers.image.base import BaseImageProvider
 from vda.renderers.ffmpeg import (
     FFmpegRenderer,
@@ -38,6 +44,15 @@ class Orchestrator:
         self.asset_registry = AssetRegistry()
         self.timeline_builder = TimelineBuilder()
 
+        self.pipeline_runner = PipelineRunner(
+            steps=[
+                PlanningStep(
+                    self.planner,
+                    self.workspace,
+                )
+            ]
+        )
+
     def run(
         self,
         topic: str,
@@ -46,13 +61,18 @@ class Orchestrator:
         print(" Video Director Agent")
         print("=================================")
 
-        project = self.planner.create_project(
-            topic
+        context = PipelineContext(
+            topic=topic,
+            project=None,
+            workspace=self.workspace,
+            asset_registry=self.asset_registry,
         )
 
-        self.workspace.create_project(
-            project
+        context = self.pipeline_runner.run(
+            context
         )
+
+        project = context.project
 
         video_provider = (
             self.dispatcher.select_provider()
