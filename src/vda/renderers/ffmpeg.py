@@ -47,6 +47,8 @@ class FFmpegRenderer(BaseRenderer):
             "-y",
         ]
 
+        input_count = 0
+
         for track in timeline.tracks:
             for segment in track.segments:
                 asset = self.registry.get(
@@ -60,6 +62,20 @@ class FFmpegRenderer(BaseRenderer):
                             str(asset.path),
                         ]
                     )
+
+                    input_count += 1
+
+        if input_count > 1:
+            command.extend(
+                [
+                    "-filter_complex",
+                    self.build_concat_filter(
+                        input_count
+                    ),
+                    "-map",
+                    "[out]",
+                ]
+            )
 
         command.append(
             output_path
