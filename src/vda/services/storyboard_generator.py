@@ -59,6 +59,11 @@ class StoryboardGenerator:
                 "Project plan contains no scenes."
             )
 
+        self.workspace.cleanup_project(
+            project_id=project_id,
+            expected_scene_count=len(project.scenes),
+        )
+
         results = [
             self._generate_scene(
                 project=project,

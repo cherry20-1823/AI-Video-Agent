@@ -1,4 +1,5 @@
 import json
+import shutil
 from pathlib import Path
 
 from vda.models.project import Project
@@ -100,6 +101,35 @@ class Workspace:
 
         return scene_dir
 
+    def cleanup_project(
+        self,
+        project_id: str,
+        expected_scene_count: int,
+    ) -> list[Path]:
+        if expected_scene_count < 0:
+            raise ValueError(
+                "expected_scene_count cannot be negative."
+            )
+
+        project_dir = self.project_dir(project_id)
+        removed: list[Path] = []
+
+        for path in project_dir.glob("scene-*"):
+            if not path.is_dir():
+                continue
+
+            suffix = path.name.removeprefix("scene-")
+
+            if not suffix.isdigit():
+                continue
+
+            scene_id = int(suffix)
+
+            if scene_id > expected_scene_count:
+                shutil.rmtree(path)
+                removed.append(path)
+
+        return removed
 
     def save_manifest(
         self,
